@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/07/05
- * Time: 21:22
- */
 
 namespace backend\assets;
 
