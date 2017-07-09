@@ -1,0 +1,1 @@
+d:\psd1603\blogdemo2_excise\yii sms/send >>d:\psd1603\blogdemo2_excise\sms.log

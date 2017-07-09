@@ -1,0 +1,15 @@
+将下载解压好的basic和advanced文件夹中的文件分别考到相应的目录下,
+访问basic目录,输入http://localhost:6666/yii2/study_basic/web时,显示cookie验证的问题,可在config文件夹里找到web.php,打开后,
+修改 'cookieValidationKey' => 'abc', 项,abc 是自己添加的,随便写个就行.
+
+对于advanced,官方下载的源码中是缺失配置文件和index.php，需要执行init。在执行init时,会出现php.exe找不到的问题,可到计算机环境变量中编辑系统变量path,把php.exe的路径加上即可(这里是D:\phpdev\php-5.4).继续运行init.exe,又会出现The OpenSSL PHP extension is required by Yii2 的问题,可找到php.ini中openssl这项,把它打开即可(原来是disabled).
+
+后面选择开发环境.
+
+再执行yii.bat
+
+配置数据库的文件是common/config/main-local.php
+
+
+对于advanced目录:其下的frontend和backend文件夹,可以看作是两个独立的basic文件夹.而common文件夹则放置了前后台共用的文件.
+ console也是一个独立的应用,只不过是控制台应用
