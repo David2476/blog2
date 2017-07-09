@@ -11,7 +11,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
-        'defaultRoute'=>'post/index',  //重新指定缺省的路由，如不加此语句则缺省的还是前台的首页
+        //'defaultRoute'=>'post/index',  //重新指定缺省的路由，如不加此语句则缺省的还是前台的首页
         'language'=>'zh-CN',    //和上一句一样都是新加的
     'components' => [
         'request' => [
