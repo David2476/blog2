@@ -45,8 +45,8 @@ class Post extends \yii\db\ActiveRecord
             [['content', 'tags'], 'string'],
             [['status', 'create_time', 'update_time', 'author_id'], 'integer'],
             [['title'], 'string', 'max' => 128],
-//            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => Adminuser::className(), 'targetAttribute' => ['author_id' => 'id']],
-            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
+            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => Adminuser::className(), 'targetAttribute' => ['author_id' => 'id']],
+//            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
             [['status'], 'exist', 'skipOnError' => true, 'targetClass' => Poststatus::className(), 'targetAttribute' => ['status' => 'id']],
         ];
     }
@@ -164,7 +164,7 @@ class Post extends \yii\db\ActiveRecord
 
     public function getCommentCount(){
         return Comment::find()->where(['post_id'=>$this->id,'status'=>2])->count();
-    }
+}
 }
 
 

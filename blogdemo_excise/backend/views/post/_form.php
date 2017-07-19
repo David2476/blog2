@@ -64,7 +64,7 @@ header('content-type:text/html;charset=utf-8');
             ->orderBy('position')
             ->indexBy('id')  //不按正常的索引排序，而是按id排序
             ->column();  //获得结果与上面方法完全一致
-//    echo "<pre>";
+//        echo "<pre>";
 //        print_r($allStatus);
 //        echo "</pre>";
 //        exit(0);
@@ -79,15 +79,17 @@ header('content-type:text/html;charset=utf-8');
 -->
    <!--  <?= $form->field($model, 'author_id')->textInput() ?>-->
 
-    <?= $form->field($model,'author_id')
-        ->dropDownList(\common\models\Adminuser::find()
-                ->select(['nickname','id'])
+    <?php $allStatus1=\common\models\Adminuser::find()
+        ->select(['nickname','id'])
 //        ->dropDownList(\common\models\User::find()  //博客的作者就是管理员，故仍用上句
 //            ->select(['username','id'])
-                ->indexBy('id')  //不按正常的索引排序，而是按id排序
-                ->column()
-        ,['prompt'=>'请选择作者']);?>
-
+        ->indexBy('id')  //不按正常的索引排序，而是按id排序
+        ->column()
+    ?>
+    <?= $form->field($model,'author_id')
+        ->dropDownList($allStatus1
+        ,['prompt'=>'请选择作者']);
+    ?>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? '新增' : '修改', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

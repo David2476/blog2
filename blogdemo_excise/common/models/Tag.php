@@ -56,7 +56,7 @@ class Tag extends \yii\db\ActiveRecord
     public static function addTags($tags){//$tags是要增加的标签，是一个数组
         if(empty($tags)) return;
         foreach($tags as $name){//把输入的标签数组遍历，看数据库中有无同名的标签
-            $aTag=Tag::find()->where(['name'=>'$name'])->one(); //Tag不能写成tag，一个坑
+            $aTag=Tag::find()->where(['name'=>$name])->one(); //Tag不能写成tag，一个坑
             $aTagCount=Tag::find()->where(['name'=>$name])->count();//下面判断用
 
             if(!$aTagCount){ //如果数据库中没有该标签，则在tag表中新增一个对象或这说一条记录，把相应的属性赋给它，其中frequency=1。

@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use common\models\Comment;
 /**
  * Created by PhpStorm.
  * User: Administrator
@@ -20,18 +21,42 @@ use yii\helpers\Html;
             <!-- 后注：博客应发表博主也就是管理员自己的文章，其它注册用户只能那个发表评论，因此视频中是对的。-->
             <span class="glyphicon glyphicon-user" aria-hidden="true"></span><em><?= Html::encode($model->author->nickname) ?></em>
         </div>
-    </div>
+
     <br>
     <div class="content">  <!-- 这段是显示文章摘要-->
         <?= $model->beginning;?>
     </div>
 
     <br>
-    <div class="nav">
-        <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
-        <?= implode(', ',$model->tagLinks);?>
-        <br>
-        <?= Html::a("评论({$model->commentCount})",$model->url.'#comments')?> | 最后修改于<?= date('Y-m-d H:i:s',$model->update_time)?>
+        <div class="nav">
+            <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+            <?= implode(', ',$model->tagLinks);?>
+            <br>
+
+
+<?php //$data= Yii::$app->db->createCommand('select count(*) from comment a inner join post b on a.post_id=b.id')->queryOne()?>
+               <?= Html::a("评论({$model->commentCount})",$model->url.'#comments')?><?= date('Y-m-d H:i:s',$model->update_time)?>
+
+
+
+       <!--     <?php //数据缓存部分：缓存依赖, 加了缓存依赖后，即便没有到缓存过期时间，缓存还是被刷新了
+/*
+            $data=Yii::$app->cache->get('postcount');
+            //$results = Yii::$app->db->createCommand('SELECT count(*) from comment')->queryOne();//显示评论条数没问题
+               //$dependency=new \yii\caching\DbDependency(['sql'=>'SELECT count(*) from post']);
+            $dependency=new \yii\caching\DbDependency(['sql'=>'SELECT count(*) from comment']);
+            //$dependency = new \yii\caching\ExpressionDependency(['expression'=>'common\models\Comment::find()->count()']);
+            if($data===false){ //后面的判断是使ListView下的文章id变化时也刷新缓存
+              // $data=$model->commentCount;
+               $data=Comment::find()->where(['post_id'=>$key])->count();
+                Yii::$app->cache->set('postCount',$data,6000,$dependency); //
+//                Yii::$app->cache->set('postCount',$data,6000);
+            }
+*/
+?> -->
+            <!--     <?//= Html::a("评论({$data})",$model->url.'#comments')?> 最后修改于?><? //=date('Y-m-d H:i:s',$model->update_time);?> -->
+
+        </div>
     </div>
 </div>
 

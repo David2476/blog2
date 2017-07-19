@@ -7,6 +7,7 @@ use common\models\Post;
 use common\models\PostSearch;
 use common\models\Tag;
 use common\models\Comment;
+use yii\filters\AccessControl;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -19,6 +20,8 @@ use yii\web\User;
 class PostController extends Controller
 {
     public $added=0; //0代表还没有新回复
+    public $test1=0;//仅为测试
+
     /**
      * @inheritdoc
      */
@@ -31,6 +34,54 @@ class PostController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+
+            'access'=>[
+                'class'=>AccessControl::className(),
+                'rules'=>[
+                    [
+                        'actions'=>['index'],
+                        'allow'=>true,
+                        'roles'=>['?'],
+                    ],
+                    [
+                        'actions'=>['index','detail'],
+                        'allow'=>true,
+                        'roles'=>['@'],
+                    ],
+                ],
+            ],
+
+            'pageCache'=>[
+                'class'=>'yii\filters\PageCache',
+                'only'=>['index'],
+                'duration'=>600,
+                'variations'=>[
+                    yii::$app->request->get('page'),
+                    yii::$app->request->get('PostSearch'),
+                    yii::$app->user->isGuest,  //main-local.php中已关闭了Crsf验证,本语句针对退出当前页面时出现缓存的问题。
+
+                ],
+                'dependency'=>[  //
+                    'class'=>'yii\caching\DbDependency',
+                    'sql'=>'select count(*) from post',
+                ],
+            ],
+
+            'httpCache'=>[
+                'class'=>'yii\filters\HttpCache',
+                'only'=>['detail'],
+                'lastModified'=>function($action,$params){
+                    $q=new \yii\db\Query();
+                    return $q->from('post')->max('update_time');
+                },
+                'etagSeed'=>function($action,$params){
+                    $post=$this->findModel(Yii::$app->request->get('id')); //获取文章内容
+                    $commentCount=Comment::find()->where(['post_id'=>Yii::$app->request->get('id'),'status'=>2])->count(); //起作用了
+                    return serialize([$post->title,$post->content,$commentCount]);
+                 },
+               //  'cacheControlHeader'=>'public,max-age=600',
+            ]
+
         ];
     }
 
@@ -45,7 +96,6 @@ class PostController extends Controller
 ////        echo $string;
 //        echo Html::encode($string);
 //        exit();
-
         $tags=Tag::findTagWeights();
         $recentComments=Comment::findRecentComments();
 
