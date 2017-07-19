@@ -1,5 +1,5 @@
 <?php
-
+//文章类控制器
 namespace frontend\controllers;
 
 use Yii;
