@@ -35,7 +35,7 @@ use common\models\Comment;
 
 
 <?php //$data= Yii::$app->db->createCommand('select count(*) from comment a inner join post b on a.post_id=b.id')->queryOne()?>
-               <?= Html::a("评论({$model->commentCount})",$model->url.'#comments')?><?= date('Y-m-d H:i:s',$model->update_time)?>
+               <?= Html::a("评论({$model->commentCount})",$model->url.'#comments')?>&nbsp;&nbsp;<?= date('Y-m-d H:i:s',$model->update_time)?>
 
 
 

@@ -1,0 +1,5 @@
+注意复制建立Asset文件后要改类名，把下面AppAsset换成你要改的名字
+
+class AppAsset extends AssetBundle
+{
+}

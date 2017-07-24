@@ -37,7 +37,7 @@ class TagsCloudWidget extends Widget{
                 ' <h'.$weight.' style="display:inline-block;"><span class="label label-'.$fontStyle[$weight].
                 '">'.$tag.'</span></h'.$weight.'></a>';
         }
-        sleep(3); //测试片段缓存、页面缓存、http缓存使用
+       // sleep(3); //测试片段缓存、页面缓存、http缓存使用
         return $tagString;
     }
 

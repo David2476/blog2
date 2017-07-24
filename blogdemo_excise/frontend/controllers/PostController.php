@@ -50,7 +50,7 @@ class PostController extends Controller
                     ],
                 ],
             ],
-
+/*
             'pageCache'=>[
                 'class'=>'yii\filters\PageCache',
                 'only'=>['index'],
@@ -81,7 +81,7 @@ class PostController extends Controller
                  },
                //  'cacheControlHeader'=>'public,max-age=600',
             ]
-
+*/
         ];
     }
 
@@ -194,12 +194,13 @@ class PostController extends Controller
         $tags=Tag::findTagWeights();
         $recentComments=Comment::findRecentComments();
 
+        //把当前用户的资料传递给commmentModel对象
         $userMe=\common\models\User::findOne(Yii::$app->user->id);
         $commentModel=new Comment();
         $commentModel->email=$userMe->email;
         $commentModel->userid=$userMe->id;
 
-        //step2. 当评论提交时，处理评论, 完成这段后，把$this->added在step3中传给视图
+        //step2. 当评论提交时，
         if($commentModel->load(Yii::$app->request->post())){ //Yii::$app->request相当于$_POST
             $commentModel->status=1;//新评论默认状态为 pending 也就是待审核
             $commentModel->post_id=$id;
