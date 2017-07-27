@@ -2,6 +2,7 @@
 //文章类控制器
 namespace frontend\controllers;
 
+use common\models\CommentReply;
 use Yii;
 use common\models\Post;
 use common\models\PostSearch;
@@ -44,7 +45,7 @@ class PostController extends Controller
                         'roles'=>['?'],
                     ],
                     [
-                        'actions'=>['index','detail'],
+                        'actions'=>['index','detail','reply'],
                         'allow'=>true,
                         'roles'=>['@'],
                     ],
@@ -188,34 +189,63 @@ class PostController extends Controller
         }
     }
 
-    public function actionDetail($id){
+    public function actionDetail($id,$content='',$reply_index=0)
+    {
+
         //step1. 准备数据模型
-        $model=$this->findModel($id);
-        $tags=Tag::findTagWeights();
-        $recentComments=Comment::findRecentComments();
+        $model = $this->findModel($id);
+        $tags = Tag::findTagWeights();
+        $recentComments = Comment::findRecentComments();
+        $recentCommentReplies = Comment::findRecentCommentReplies();
 
         //把当前用户的资料传递给commmentModel对象
-        $userMe=\common\models\User::findOne(Yii::$app->user->id);
-        $commentModel=new Comment();
-        $commentModel->email=$userMe->email;
-        $commentModel->userid=$userMe->id;
+        $userMe = \common\models\User::findOne(Yii::$app->user->id);
+        $commentModel = new Comment();
+        $commentModel->email = $userMe->email;
+        $commentModel->userid = $userMe->id;
 
         //step2. 当评论提交时，
-        if($commentModel->load(Yii::$app->request->post())){ //Yii::$app->request相当于$_POST
-            $commentModel->status=1;//新评论默认状态为 pending 也就是待审核
-            $commentModel->post_id=$id;
-            if($commentModel->save()){
-                $this->added=1;
+        if ($reply_index == 0) {
+            if ($commentModel->load(Yii::$app->request->post())) { //Yii::$app->request相当于$_POST
+                $commentModel->status = 1;//新评论默认状态为 pending 也就是待审核
+                $commentModel->post_id = $id;
+                if ($commentModel->save()) {
+                    $this->added = 1;
+                }
+            }
+        } else { //当$reply_index==1时，即是评论的回复时，**注意是评论的回复而不是评论
+            // $id=$_GET['id'];
+            $commentModel->status = 1;//新评论默认状态为 pending 也就是待审核
+            $commentModel->post_id = $id;
+            $commentModel->content = $content;
+            $commentModel->reply = 1;
+            if ($commentModel->save()) {
+                $this->added = 1;
             }
         }
 
+
         //step3. 传数据给视图渲染
-        return $this->render('detail',[
-            'model'=>$model,
-            'tags'=>$tags,
-            'recentComments'=>$recentComments,
-            'commentModel'=>$commentModel,
-            'added'=>$this->added, //完成step2后，加此句
+        return $this->render('detail', [
+            'model' => $model,
+            'tags' => $tags,
+            'recentComments' => $recentComments,
+            'recentCommentReplies' => $recentCommentReplies,
+            'commentModel' => $commentModel,
+            'added' => $this->added, //完成step2后，加此句
+            'reply_index'=>$reply_index, //如果$reply_index=1，则在detail页面渲染评论回复
         ]);
+
+    }
+
+    public function actionReply(){
+
+          $id=$_GET['id'];
+          $content=$_GET['content'];
+//          exit('Reply');
+        //$this->redirect(array('/post/detail','id'=>$id,'content'=>$content));
+
+          return Yii::$app->runAction('post/detail',['id'=>$id,'content'=>$content,'reply_index'=>1]);
+
     }
 }

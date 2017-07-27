@@ -79,7 +79,17 @@ class Post extends \yii\db\ActiveRecord
     public function getActiveComments() //获取已审核的评论
     {
         return $this->hasMany(Comment::className(), ['post_id' => 'id'])
-            ->where('status=:status',[':status'=>2])->orderBy('create_time DESC');
+           // ->where('status=:status',[':status'=>2])->orderBy('create_time DESC');
+          // ->where('status=:status','reply=:reply',[':status'=>2,':reply'=>0])->orderBy('create_time DESC');
+           ->where(['status'=>2,'reply'=>0])->orderBy('create_time DESC');
+    }
+
+    public function getActiveCommentReplies() //获取已审核的评论回复
+    {
+        return $this->hasMany(Comment::className(), ['post_id' => 'id'])
+            // ->where('status=:status',[':status'=>2])->orderBy('create_time DESC');
+            //->where('status=:status','reply=:reply',[':status'=>2,':reply'=>1])->orderBy('create_time DESC');
+            ->where(['status'=>2,'reply'=>1])->orderBy('create_time DESC');
     }
 
     /**
@@ -163,7 +173,7 @@ class Post extends \yii\db\ActiveRecord
     }
 
     public function getCommentCount(){
-        return Comment::find()->where(['post_id'=>$this->id,'status'=>2])->count();
+        return Comment::find()->where(['post_id'=>$this->id,'status'=>2,'reply'=>0])->count();
 }
 }
 

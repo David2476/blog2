@@ -66,7 +66,7 @@ use common\models\Comment;
 
             <?php if($model->commentCount>=1) {?>
                 <h5><?= $model->commentCount. '条评论'?></h5> <!--评论放到——comment视图去展示-->
-                <?= $this->render('_comment',['post'=>$model,'comments'=>$model->activeComments]);?>
+                <?= $this->render('_comment',['post'=>$model,'comments'=>$model->activeComments,'commentReplies'=>$model->activeCommentReplies,'reply_index'=>$reply_index]);?>
             <?php }?>
 
             <h5>发表评论</h5>
