@@ -71,9 +71,9 @@ class Post extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getComments()
+    public function getComments()        //注意：$reply_id=0时，comment存放的是文章的评论；而$reply_id不等于0时comment存放的是对评论id为$reply_id的回复
     {
-        return $this->hasMany(Comment::className(), ['post_id' => 'id']);
+        return $this->hasMany(Comment::className(), ['post_id' => 'id'])->where(['reply_id'=>0]);
     }
 
     public function getActiveComments() //获取已审核的评论
@@ -81,16 +81,10 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasMany(Comment::className(), ['post_id' => 'id'])
            // ->where('status=:status',[':status'=>2])->orderBy('create_time DESC');
           // ->where('status=:status','reply=:reply',[':status'=>2,':reply'=>0])->orderBy('create_time DESC');
-           ->where(['status'=>2,'reply'=>0])->orderBy('create_time DESC');
+           ->where(['status'=>2,'reply_id'=>0])->orderBy('create_time DESC');
     }
 
-    public function getActiveCommentReplies() //获取已审核的评论回复
-    {
-        return $this->hasMany(Comment::className(), ['post_id' => 'id'])
-            // ->where('status=:status',[':status'=>2])->orderBy('create_time DESC');
-            //->where('status=:status','reply=:reply',[':status'=>2,':reply'=>1])->orderBy('create_time DESC');
-            ->where(['status'=>2,'reply'=>1])->orderBy('create_time DESC');
-    }
+
 
     /**
      * @return \yii\db\ActiveQuery
@@ -173,8 +167,27 @@ class Post extends \yii\db\ActiveRecord
     }
 
     public function getCommentCount(){
-        return Comment::find()->where(['post_id'=>$this->id,'status'=>2,'reply'=>0])->count();
-}
+        return Comment::find()->where(['post_id'=>$this->id,'status'=>2,'reply_id'=>0])->count();
+    }
+
+    public function commentReplyCount($reply_id){
+        return Comment::find()->where(['status'=>2,'reply_id'=>$reply_id])->count();
+    }
+
+    public function activeCommentReplies($reply_id) //获取已审核的评论回复(针对某一评论的回复)
+    {
+        return  Comment::find()->where(['status'=>2,'reply_id'=>$reply_id])->orderBy('create_time DESC')->all();
+
+    }
+
+    public function CommentCount0($postId){
+        return Comment::find()->where(['post_id'=>$postId,'status'=>2,'reply_id'=>0])->count();
+    }
+
+    public function CommentReplies($commentId)
+    {
+        return Comment::find()->where(['id'=>$commentId])->one();
+    }
 }
 
 

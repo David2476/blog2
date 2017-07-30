@@ -92,6 +92,10 @@ class PostController extends Controller
      */
     public function actionIndex()
     {
+//        $obj=new Post();
+//        $a=$obj-> activeCommentReplies(227) ;
+//        return $a;
+
         //下面这段测试encode前后有何区别，
 //        $string = '<script>alert(1);</script>';
 ////        echo $string;
@@ -189,14 +193,15 @@ class PostController extends Controller
         }
     }
 
-    public function actionDetail($id,$content='',$reply_index=0)
+    public function actionDetail($id,$content='',$reply_id=0)
     {
 
         //step1. 准备数据模型
+        $postObj= new Post();
         $model = $this->findModel($id);
         $tags = Tag::findTagWeights();
         $recentComments = Comment::findRecentComments();
-        $recentCommentReplies = Comment::findRecentCommentReplies();
+        //$recentCommentReplies = Comment::findRecentCommentReplies($reply_id);
 
         //把当前用户的资料传递给commmentModel对象
         $userMe = \common\models\User::findOne(Yii::$app->user->id);
@@ -204,21 +209,28 @@ class PostController extends Controller
         $commentModel->email = $userMe->email;
         $commentModel->userid = $userMe->id;
 
-        //step2. 当评论提交时，
-        if ($reply_index == 0) {
+        //step2.
+        if ($reply_id == 0) { //当评论提交时，
             if ($commentModel->load(Yii::$app->request->post())) { //Yii::$app->request相当于$_POST
-                $commentModel->status = 1;//新评论默认状态为 pending 也就是待审核
+                $commentModel->status = 2;//新评论默认状态为 pending 也就是待审核，应该设为1，如果设为2，表示已审核，那页面会直接显示了
                 $commentModel->post_id = $id;
                 if ($commentModel->save()) {
                     $this->added = 1;
                 }
             }
-        } else { //当$reply_index==1时，即是评论的回复时，**注意是评论的回复而不是评论
+        } else { //当$reply_index!==0时，即是评论的回复时，**注意是评论的回复而不是评论
             // $id=$_GET['id'];
-            $commentModel->status = 1;//新评论默认状态为 pending 也就是待审核
+            $commentModel->status = 2;//新评论回复默认状态为 pending 也就是待审核，应该设为1，如果设为2，表示已审核，那页面会直接显示了
             $commentModel->post_id = $id;
             $commentModel->content = $content;
-            $commentModel->reply = 1;
+
+            //把对评论回复的回复都放到相应的评论里面，以方便显示
+            $obj=$postObj->commentReplies($reply_id);//获取评论id为$reply_id的一条评论记录
+            if($obj->reply_id==0){//此时是对评论的回复，而不是对评论回复的回复
+                $commentModel->reply_id=$reply_id;
+            }else{//此时是对评论回复的回复，要上追到相关的评论，也就是是说，这里的$commentModel->reply_id一定是评论的回复，不然在页面中无法显示出来，我们要把一个评论下各种回复（包括回复的回复）都放到改评论下。
+                $commentModel->reply_id=$obj->reply_id;
+            }
             if ($commentModel->save()) {
                 $this->added = 1;
             }
@@ -227,13 +239,13 @@ class PostController extends Controller
 
         //step3. 传数据给视图渲染
         return $this->render('detail', [
+            'postObj'=>$postObj,
             'model' => $model,
             'tags' => $tags,
             'recentComments' => $recentComments,
-            'recentCommentReplies' => $recentCommentReplies,
+           //'recentCommentReplies' => $recentCommentReplies,
             'commentModel' => $commentModel,
             'added' => $this->added, //完成step2后，加此句
-            'reply_index'=>$reply_index, //如果$reply_index=1，则在detail页面渲染评论回复
         ]);
 
     }
@@ -241,11 +253,14 @@ class PostController extends Controller
     public function actionReply(){
 
           $id=$_GET['id'];
-          $content=$_GET['content'];
+          $content=$_GET['content1'];
+          $reply_id=$_GET['reply_id'];
 //          exit('Reply');
         //$this->redirect(array('/post/detail','id'=>$id,'content'=>$content));
 
-          return Yii::$app->runAction('post/detail',['id'=>$id,'content'=>$content,'reply_index'=>1]);
+          return Yii::$app->runAction('post/detail',['id'=>$id,'content'=>$content,'reply_id'=>$reply_id]);
 
     }
+
+
 }

@@ -19,7 +19,7 @@ use Yii;
  * @property Post $post
  * @property Commentstatus $status0
  * @property User $user
- * @property integer $reply
+ * @property integer $reply_id
  */
 class Comment extends \yii\db\ActiveRecord
 {
@@ -39,7 +39,7 @@ class Comment extends \yii\db\ActiveRecord
         return [
             [['content', 'status', 'userid', 'email', 'post_id'], 'required'],
             [['content'], 'string'],
-            [['status', 'create_time', 'userid', 'post_id', 'remind', 'reply'], 'integer'],
+            [['status', 'create_time', 'userid', 'post_id', 'remind', 'reply_id'], 'integer'],
             [['email', 'url'], 'string', 'max' => 128],
             [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'id']],
             [['status'], 'exist', 'skipOnError' => true, 'targetClass' => Commentstatus::className(), 'targetAttribute' => ['status' => 'id']],
@@ -62,7 +62,7 @@ class Comment extends \yii\db\ActiveRecord
             'url' => 'Url',
             'post_id' => '文章',
             'remind' => '是否提醒',
-            'reply' => '是否评论回复',
+            'reply_id' => '评论回复id',
         ];
     }
 
@@ -120,12 +120,12 @@ class Comment extends \yii\db\ActiveRecord
 
     //用于前台首页
     public static function findRecentComments($limit=10){
-        return Comment::find()->where(['status'=>2,'reply'=>0])->orderBy('create_time DESC')
+        return Comment::find()->where(['status'=>2,'reply_id'=>0])->orderBy('create_time DESC')
             ->limit($limit)->all();
     }
 
-    public static function findRecentCommentReplies($limit=10){
-        return Comment::find()->where(['status'=>2,'reply'=>1])->orderBy('create_time DESC')
+    public static function findRecentCommentReplies($reply_id,$limit=10){
+        return Comment::find()->where(['status'=>2,'reply_id'=>$reply_id])->orderBy('create_time DESC')
             ->limit($limit)->all();
     }
 
