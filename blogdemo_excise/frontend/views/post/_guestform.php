@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
         'action'=>['post/detail','id'=>$id,'#'=>'comments'], //#指提交后的定位点
         'method'=>'post',
-       // 'options'=>['autocomplete'=>'off','name'=>"_csrf",'type'=>"hidden",'id'=>"_csrf",'value'=>Yii::$app->request->csrfToken], //本意是解决'Bad Request (#400)'问题,但是前台mian-local里crsf验证为true时也不报错了，所以先屏蔽此句
+       // 'options'=>['autocomplete'=>'off','name'=>"_csrf",'type'=>"hidden",'id'=>"_csrf",'value'=>Yii::$app->request->csrfToken], //本意是解决'Bad Request (#400)'问题,但似乎不齐作用，所以先屏蔽此句
     ]); ?>
 
     <div class="row">

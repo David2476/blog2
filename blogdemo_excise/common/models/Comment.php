@@ -62,7 +62,7 @@ class Comment extends \yii\db\ActiveRecord
             'url' => 'Url',
             'post_id' => '文章',
             'remind' => '是否提醒',
-            'reply_id' => '评论回复id',
+            'reply_id' => '回复id',
         ];
     }
 

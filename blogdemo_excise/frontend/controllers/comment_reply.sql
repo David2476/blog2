@@ -1,4 +1,4 @@
-create table if not exists comment_reply(
+create table if not exists comment_reply(  #未使用
 	id          int      	    auto_increment primary key,
 	content     text          not null,
 	user_id     int           not null,

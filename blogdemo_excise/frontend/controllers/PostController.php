@@ -193,9 +193,9 @@ class PostController extends Controller
         }
     }
 
-    public function actionDetail($id,$content='',$reply_id=0)
+    //public function actionDetail($id,$content='',$reply_id=0) //url传值时
+    public function actionDetail($id)
     {
-
         //step1. 准备数据模型
         $postObj= new Post();
         $model = $this->findModel($id);
@@ -209,6 +209,8 @@ class PostController extends Controller
         $commentModel->email = $userMe->email;
         $commentModel->userid = $userMe->id;
 
+        $reply_id=isset($_POST['reply_id'])?$_POST['reply_id']:0;
+
         //step2.
         if ($reply_id == 0) { //当评论提交时，
             if ($commentModel->load(Yii::$app->request->post())) { //Yii::$app->request相当于$_POST
@@ -218,11 +220,16 @@ class PostController extends Controller
                     $this->added = 1;
                 }
             }
-        } else { //当$reply_index!==0时，即是评论的回复时，**注意是评论的回复而不是评论
-            // $id=$_GET['id'];
-            $commentModel->status = 2;//新评论回复默认状态为 pending 也就是待审核，应该设为1，如果设为2，表示已审核，那页面会直接显示了
+        } else { //当$reply_id!==0时，即是评论的回复时，**注意是评论的回复而不是评论
+
+            //接收ajax传递数据($reply_id前面已传了)
+            $id=$_POST['id'];
+            $content=$_POST['content'];
             $commentModel->post_id = $id;
             $commentModel->content = $content;
+            $commentModel->reply_id = $reply_id;
+
+            $commentModel->status = 2;//新评论回复默认状态为 pending 也就是待审核，应该设为1，如果设为2，表示已审核，那页面会直接显示了
 
             //把对评论回复的回复都放到相应的评论里面，以方便显示
             $obj=$postObj->commentReplies($reply_id);//获取评论id为$reply_id的一条评论记录
@@ -231,7 +238,8 @@ class PostController extends Controller
             }else{//此时是对评论回复的回复，要上追到相关的评论，也就是是说，这里的$commentModel->reply_id一定是评论的回复，不然在页面中无法显示出来，我们要把一个评论下各种回复（包括回复的回复）都放到改评论下。
                 $commentModel->reply_id=$obj->reply_id;
             }
-            if ($commentModel->save()) {
+            $re=$commentModel->save();
+            if ($re) {
                 $this->added = 1;
             }
         }
@@ -250,17 +258,17 @@ class PostController extends Controller
 
     }
 
-    public function actionReply(){
-
-          $id=$_GET['id'];
-          $content=$_GET['content1'];
-          $reply_id=$_GET['reply_id'];
-//          exit('Reply');
-        //$this->redirect(array('/post/detail','id'=>$id,'content'=>$content));
-
-          return Yii::$app->runAction('post/detail',['id'=>$id,'content'=>$content,'reply_id'=>$reply_id]);
-
-    }
+//    public function actionReply(){ //本函数主要用于接收页面get方法传递的数据，当前面使用ajax传递数据时，本函数就没用了
+//
+//          $id=$_GET['id'];
+//          $content=$_GET['content'];
+//          $reply_id=$_GET['reply_id'];
+////          exit('Reply');
+//        //$this->redirect(array('/post/detail','id'=>$id,'content'=>$content));
+//
+//          return Yii::$app->runAction('post/detail',['id'=>$id,'content'=>$content,'reply_id'=>$reply_id]);
+//
+//    }
 
 
 }

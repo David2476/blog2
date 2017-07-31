@@ -81,6 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ],
 
+            'reply_id',
             // 'post_id',
             'post.title', //写成题目以便知道对哪篇文章进行的评论。这里对题目进行搜索和排序和前面是一样的，就不再做了。
 
@@ -88,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //增加一个评审通过按钮
             [
               'class' => 'yii\grid\ActionColumn',
-              'template'=>'{view}{update}{delete}{approve}', //这里大括号里的每一个动作都对应于控制器中的actionID,所以对于新。增的按钮approve，在控制器中必须有相应的动作
+              'template'=>'{view}{update}{delete}{approve}', //这里大括号里的每一个动作都对应于控制器中的actionID,所以对于新增的按钮approve，在控制器中必须有相应的动作
               'buttons'=>
                         [
                           'approve' =>function($url,$model,$key){
