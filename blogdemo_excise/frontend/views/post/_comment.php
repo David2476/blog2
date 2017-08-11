@@ -99,8 +99,10 @@ use common\models\Post;
                             }
 
                 var reply_id=window.commentId;
-             //   inp.parentNode.removeChild(inp); //删除inp节点
-             //   inp=null; //从内存中清除inp
+                inp.parentNode.removeChild(inp); //删除inp节点
+                butt.parentNode.removeChild(butt); //删除butt节点
+                inp=null; //从内存中清除inp
+                butt=null;
 //                inp.parentNode.removeChild(butt);
                // window.location="index.php?r=post/reply&id="+id+"&content1="+content1+"&reply_id="+reply_id+"&#comments";
 
@@ -121,8 +123,9 @@ use common\models\Post;
                     }
                 });
                 var radom=parseInt(Math.random()*1000+1);
-                window.location="index.php?r=post/detail&id="+id+'&radom='+radom+"#comments";
-              //  location.replace("index.php?r=post/detail&id="+id+'&radom='+radom+"#comments");
+               // window.location="index.php?r=post/detail&id="+id+'&radom='+radom+"#comments";
+              //location.replace("index.php?r=post/detail&id="+id+'&radom='+radom+"#comments");
+                location.reload();//刷新当前文档
 
             }
        };
